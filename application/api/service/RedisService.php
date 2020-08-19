@@ -17,8 +17,8 @@ class RedisService
     public function setRedisParam($param,$value){
         return Cache::store('redis')->set($param, $value);
     }
-    //获取服务器
-    public function getServer($table){
+    //获取桌子服务器
+    public function getTableServer($table){
         //判断桌子的服务器
         $table_data = $this->getRedisParam('table_'.$table);
         if(!empty($table_data)){
@@ -44,6 +44,25 @@ class RedisService
             $table_data['server'] = $result[0];
             $this->setRedisParam('table_'.$table, $table_data);
             return $result[0];
+        }
+    }
+    
+    //获取用户服务器
+    public function getUserTable($user_id){
+        //判断用户的服务器
+        $user_data = $this->getRedisParam('user_'.$user_id);
+        if(!empty($user_data)){
+            //判断服务器是否能用
+            $server_use = $this->getRedisParam('server_use');
+            if(in_array($user_data['server'], $server_use)){
+                return $user_data['server'];
+            }else{
+                $user_data['server'] = '';
+                $this->setRedisParam('user_'.$user_id, $user_data);
+                return false;
+            }
+        }else{
+            return false;
         }
     }
 }

@@ -10,7 +10,19 @@ class Index extends Common
     {
         $table = $this->request('table');
         $redis = new RedisService();
-        $server = $redis->getServer($table);
+        $server = $redis->getTableServer($table);
+        if(!empty($server)){
+            $this->success('',$server);
+        }else{
+            $this->error('没有可用的服务器');
+        }
+    }
+    
+    //获取用户连接的服务器
+    public function userServer(){
+        $user_id = $this->request('user_id');
+        $redis = new RedisService();
+        $server = $redis->getUserServer($user_id);
         if(!empty($server)){
             $this->success('',$server);
         }else{
